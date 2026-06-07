@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Local environment
+.venv/
+venv/
+
+# Downloaded / generated data (not shipped)
+data_dir/sw/**/*.fits
+data_dir/sw/**/*.fits.gz
+data_dir/sw/**/*.npz
+data_dir/sw/**/*.npy
+data_dir/sw/**/*.png
+data_dir/sw/wsaplus.pt
+
+# Workflow outputs
+runs/
+.cache/
+
+# OS
+.DS_Store
