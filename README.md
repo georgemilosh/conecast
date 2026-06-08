@@ -4,6 +4,10 @@ Conecast is a workflow for emulating coronal mass ejection (CME) arrival at Eart
 
 The repository contains the code, notebooks, and helper scripts used to prepare solar-wind inputs, run HUXt-based experiments, and build per-event GP surrogate models. Large runtime data and generated outputs are downloaded or produced on demand.
 
+| Hit probability | Arrival time | HUXt heliosphere |
+| :---: | :---: | :---: |
+| ![Hit probability](docs/images/hit_probability_longitude_latitude.png) | ![Arrival time](docs/images/arrival_mean_longitude_width.png) | ![HUXt heliosphere](docs/images/heliosphere_snapshot.png) |
+
 Full documentation, setup instructions, tutorials, and usage examples live on the project website:
 
 [https://georgemilosh.github.io/projects/conecast/](https://georgemilosh.github.io/projects/conecast/)
