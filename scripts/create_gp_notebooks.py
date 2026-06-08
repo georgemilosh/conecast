@@ -114,21 +114,25 @@ def colab_bootstrap_cell(install_deps: bool = True) -> dict:
         if "google.colab" in sys.modules:
             REPO_URL = os.environ.get("CONECAST_REPO", "https://github.com/georgemilosh/conecast")
             REPO_DIR = "/content/conecast"
-            fresh = not os.path.isdir(REPO_DIR)
-            if fresh:
+            if not os.path.isdir(REPO_DIR):
                 os.system(f"git clone --depth 1 {REPO_URL} {REPO_DIR}")
-                # HUXt + WSA+ (and a current sunpy) are not preinstalled in Colab.
-                os.system("pip install -q "
-                          "'huxt @ git+https://github.com/University-of-Reading-Space-Science/HUXt' "
-                          "wsaplus sunpy")
             os.chdir(REPO_DIR)
-            if fresh:
-                # Those installs pull a newer NumPy/SciPy; restart so they load cleanly.
-                print("Dependencies installed - restarting the Colab runtime.")
-                print("When it reconnects, RUN THIS CELL AGAIN (or Runtime > Run all).")
+            # Decide what to do from whether the deps actually import (not from the clone existing),
+            # so a failed/partial install self-heals on a re-run.
+            try:
+                import sunpy, huxt, wsaplus  # noqa: F401
+                print("Colab bootstrap complete; cwd =", os.getcwd())
+            except ModuleNotFoundError:
+                print("Installing sunpy + WSA+ + HUXt (one-time, ~2 min)...")
+                # Install in two steps so sunpy/wsaplus land even if the git build of HUXt is slow.
+                os.system("pip install -q sunpy wsaplus")
+                os.system("pip install -q "
+                          "'huxt @ git+https://github.com/University-of-Reading-Space-Science/HUXt'")
+                # Those installs pull a newer NumPy/SciPy; restart so it loads cleanly.
+                print("Done - restarting the runtime. When it reconnects, RUN THIS CELL AGAIN "
+                      "(or Runtime > Run all).")
                 os.kill(os.getpid(), 9)
             # The WSA+ checkpoint (~317 MB) is fetched from Zenodo on demand by notebook 02.
-            print("Colab bootstrap complete; cwd =", os.getcwd())
         else:
             print("Not in Colab - using the local checkout.")
         """
