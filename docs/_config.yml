@@ -1,0 +1,6 @@
+title: Conecast
+description: CME arrival modeling with HUXt and Gaussian-process surrogates
+theme: minima
+url: https://georgemilosh.github.io
+baseurl: /conecast
+markdown: kramdown
