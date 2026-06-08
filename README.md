@@ -15,6 +15,10 @@ next-run selection. Teaching notebooks walk every step.
 > `runs/` outputs are **downloaded or generated on first run** of
 > `scripts/generate_huxt_input.py`.
 
+| ![Hit probability](docs/images/hit_probability_longitude_latitude.png) | ![Arrival time](docs/images/arrival_mean_longitude_width.png) | ![HUXt heliosphere](docs/images/heliosphere_snapshot.png) |
+| :---: | :---: | :---: |
+| **Hit probability** across the CME pointing direction (longitude vs latitude). The white line is the GP classifier's 50% hit/miss boundary; the seed CME (dot) is a clear hit. | **Mean arrival time** (24-96 h) over longitude vs width, from the GP regressor trained on hit cases. Arrival lengthens toward the white miss boundary. | **HUXt heliosphere snapshot** (ecliptic, top-down): the tracked Cone-CME (red) sweeping toward Earth - a `visualize-threshold` diagnostic. |
+
 See [Tutorial.md](Tutorial.md) for the `generate_huxt_input.py` input-preparation
 walkthrough, and [notebooks/README.md](notebooks/README.md) for the tutorial
 notebooks (GP theory, HUXt input prep, the arrival detector, and the GP surrogate).
@@ -66,17 +70,75 @@ and diagnostics, and GP outputs land under `runs/gp_surrogate/<event>/`.
 
 ---
 
-## Environment
+## Installation
+
+### Conda (recommended)
+
+Most dependencies are on conda-forge; HUXt and WSA+ are installed with pip.
 
 ```bash
-bash setup.sh                 # creates .venv and installs requirements.txt
+conda create -n conecast -c conda-forge python=3.12 \
+  numpy scipy pandas matplotlib pyyaml h5py joblib \
+  astropy sunpy scikit-learn pytorch \
+  jupyterlab ipykernel
+conda activate conecast
+
+# HUXt (the solar-wind model) and WSA+ (the speed-map model) are not on conda:
+pip install wsaplus
+pip install "huxt @ git+https://github.com/University-of-Reading-Space-Science/HUXt"
+
+# register a Jupyter kernel for the notebooks
+python -m ipykernel install --user --name conecast --display-name "Python (conecast)"
+```
+
+### pip / venv (alternative)
+
+```bash
+bash setup.sh                 # creates .venv and installs from requirements.txt
 source .venv/bin/activate
 ```
 
-`requirements.txt` is a pinned freeze; on a local machine a few platform-specific
-pins (e.g. `torch`) may need relaxing. HUXt and WSA+ install from their git/PyPI
-sources listed there. Obtain the WSA+ checkpoint `data_dir/sw/wsaplus.pt` separately
-before running the WSA+ step.
+`requirements.txt` is a pinned freeze (it also pulls HUXt and WSA+ from their
+git/PyPI sources); on a local machine a few platform-specific pins (e.g. `torch`)
+may need relaxing.
+
+### WSA+ checkpoint
+
+The WSA+ step needs the trained checkpoint `data_dir/sw/wsaplus.pt` (~317 MB), which is
+**not shipped**. Download it from Zenodo (DOI 10.5281/zenodo.16883042):
+
+```bash
+python scripts/fetch_wsaplus_checkpoint.py     # -> data_dir/sw/wsaplus.pt
+```
+
+Notebook 02 also fetches it automatically on first use, so running that notebook (or
+`generate_huxt_input.py` after fetching) needs no manual step.
+
+---
+
+## Run in Google Colab
+
+No local install required - each notebook's first cell bootstraps Colab automatically
+(clones this repo and `pip install`s `huxt` + `wsaplus`). Click a badge to open:
+
+| Notebook | Open |
+| --- | --- |
+| 01 - GP tutorial | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/georgemilosh/conecast/blob/main/notebooks/01_gp_tutorial.ipynb) |
+| 02 - HUXt inputs (GONG -> WSA+ -> boundary) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/georgemilosh/conecast/blob/main/notebooks/02_huxt_runs.ipynb) |
+| 03 - A hit and a miss | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/georgemilosh/conecast/blob/main/notebooks/03_arrival_detector_examples.ipynb) |
+| 04 - GP surrogate application | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/georgemilosh/conecast/blob/main/notebooks/04_gp_huxt_application.ipynb) |
+
+What to expect on Colab:
+
+- **Notebook 01** runs immediately - it needs no extra data.
+- **Notebook 02** downloads the ~317 MB WSA+ checkpoint from Zenodo on first use, then runs
+  WSA+ and writes the HUXt boundary (a few minutes).
+- **Notebooks 03-04** run HUXt on that boundary; notebook 04 also builds its own small GP
+  training batch inline.
+
+Tips: a free Colab CPU runtime is enough (WSA+/HUXt are light). To run from a fork, set the
+`CONECAST_REPO` environment variable (or edit `REPO_URL` in the bootstrap cell) before that
+cell executes.
 
 ---
 
