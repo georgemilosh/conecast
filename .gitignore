@@ -16,6 +16,9 @@ data_dir/sw/**/*.npz
 data_dir/sw/**/*.npy
 data_dir/sw/**/*.png
 data_dir/sw/wsaplus.pt
+# ...but DO keep the tiny (~3 KB) HUXt boundaries: with these + event_config.yaml committed,
+# notebooks 03/04 run from a clone without wsaplus.pt or re-running notebook 02.
+!data_dir/sw/**/v_boundary_*.npz
 
 # Workflow outputs
 runs/

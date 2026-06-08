@@ -238,16 +238,13 @@ def compute_subearth_track(cr_num):
 
     obs_time = t_start + dt*np.linspace(1e-6, 1-1e-6, n_hr, endpoint=False)
 
-    SBElat = np.zeros(n_hr)
-    SBElon = np.zeros(n_hr)
-
-    for i, t in enumerate(obs_time):
-        coord = sunpy.coordinates.ephemeris.get_earth(time=t).transform_to(
-            frames.HeliographicCarrington(observer='earth')
-        )
-
-        SBElat[i] = coord.lat.value
-        SBElon[i] = coord.lon.value
+    # Vectorized: one get_earth + one transform for the whole time array (the per-step loop is
+    # hundreds of calls and is very slow when each call hits the network, e.g. on Colab).
+    coords = sunpy.coordinates.ephemeris.get_earth(time=obs_time).transform_to(
+        frames.HeliographicCarrington(observer='earth')
+    )
+    SBElon = np.asarray(coords.lon.value, dtype=float)
+    SBElat = np.asarray(coords.lat.value, dtype=float)
 
     return SBElon, SBElat
 
