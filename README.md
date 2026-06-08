@@ -130,11 +130,14 @@ No local install required - each notebook's first cell bootstraps Colab automati
 
 What to expect on Colab:
 
-- **Notebook 01** runs immediately - it needs no extra data.
-- **Notebook 02** downloads the ~317 MB WSA+ checkpoint from Zenodo on first use, then runs
-  WSA+ and writes the HUXt boundary (a few minutes).
-- **Notebooks 03-04** run HUXt on that boundary; notebook 04 also builds its own small GP
-  training batch inline.
+- **Notebook 01** runs immediately - it needs no install or runtime restart (numpy /
+  scikit-learn / matplotlib are preinstalled on Colab).
+- **Notebooks 02-04** need HUXt + WSA+, so their first (bootstrap) cell installs them and then
+  **restarts the runtime once** (so the updated NumPy loads cleanly). When it reconnects, run
+  that cell again - or just **Runtime > Run all** - and execution continues.
+- **Notebook 02** then downloads the ~317 MB WSA+ checkpoint from Zenodo on first use and
+  writes the HUXt boundary; **03-04** run HUXt on that boundary (04 also builds a small GP
+  training batch inline).
 
 Tips: a free Colab CPU runtime is enough (WSA+/HUXt are light). To run from a fork, set the
 `CONECAST_REPO` environment variable (or edit `REPO_URL` in the bootstrap cell) before that

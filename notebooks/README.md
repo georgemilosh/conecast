@@ -39,6 +39,8 @@ in the bootstrap cell):
 | 03 Hit and a miss | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/georgemilosh/conecast/blob/main/notebooks/03_arrival_detector_examples.ipynb) |
 | 04 GP application | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/georgemilosh/conecast/blob/main/notebooks/04_gp_huxt_application.ipynb) |
 
-Notebook 01 runs on Colab with no extra data. Notebook 02 downloads the ~317 MB WSA+
-checkpoint from Zenodo automatically (`scripts/fetch_wsaplus_checkpoint.py`, DOI
-10.5281/zenodo.16883042) and writes the boundary; notebooks 03-04 reuse it.
+Notebook 01 runs on Colab with no install or restart. Notebooks 02-04 install HUXt + WSA+
+in their bootstrap cell and **restart the runtime once** - when it reconnects, re-run that
+cell (or Runtime > Run all). Notebook 02 then downloads the ~317 MB WSA+ checkpoint from
+Zenodo automatically (`scripts/fetch_wsaplus_checkpoint.py`, DOI 10.5281/zenodo.16883042)
+and writes the boundary; notebooks 03-04 reuse it.
