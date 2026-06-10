@@ -1349,6 +1349,9 @@ def make_arrival_slice(
     values = mean if quantity == "mean" else std
     values = values.reshape(grid_size, grid_size)
     prob = p_hit.reshape(grid_size, grid_size)
+    # Arrival time is only meaningful where the CME hits; the regressor (trained on hit rows)
+    # merely extrapolates in the miss region, so blank P(hit) < 0.5 instead of coloring it.
+    values = np.where(prob >= 0.5, values, np.nan)
 
     label = "Arrival time [hr]" if quantity == "mean" else "Arrival GP std [hr]"
     title = "Arrival-time mean" if quantity == "mean" else "Arrival-time uncertainty"
