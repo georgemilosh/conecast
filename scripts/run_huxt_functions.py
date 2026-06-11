@@ -96,7 +96,11 @@ def run_huxt_sim(theta, HUXT_KWARGS, plot=False, outdir=None, event=None):
     huxt_ts = HA.get_observer_timeseries(model, observer='Earth')
  
     if plot:
-        HA.plot_earth_timeseries(model,plot_omni=True, save=True, save_ts=True, tag=event, outdir=outdir)
+        # Standard HUXt's plot_earth_timeseries(model, plot_omni, save, tag) returns (fig, axs)
+        # and has no save_ts/outdir kwargs; capture the figure and save it into the event outdir.
+        fig_ts, _ = HA.plot_earth_timeseries(model, plot_omni=True, save=False, tag=event)
+        fig_ts.savefig(outdir + event + "_earth_timeseries.png")
+        plt.close(fig_ts)
  
         t_interest = 7*u.day
         fig, ax = HA.plot(model, t_interest)
